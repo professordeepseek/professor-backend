@@ -30,6 +30,11 @@ class Message(BaseModel):
     content: str
 
 @app.post("/chat")
+async def chat(request: dict):
+    """Просто возвращает то, что получил"""
+    print("🔥 Получен запрос от фронтенда!")
+    print("Данные:", request)
+    return {"reply": "Привет от бэкенда! Я работаю."}
 async def chat(request: ChatRequest):
     """Принимает историю сообщений, отправляет в DeepSeek, возвращает ответ"""
     
@@ -59,4 +64,5 @@ async def chat(request: ChatRequest):
 
 @app.get("/health")
 async def health():
+
     return {"status": "ok"}
