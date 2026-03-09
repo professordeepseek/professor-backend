@@ -16,7 +16,7 @@ app.add_middleware(
 )
 
 # ВАШ API-КЛЮЧ DEEPSEEK (вставьте свой)
-DEEPSEEK_API_KEY = "sk-5e7332d081a340aba5b1c6145ab4d960"
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
 
 # Модель данных для входящего запроса
 class ChatRequest(BaseModel):
@@ -66,5 +66,6 @@ async def chat(request: ChatRequest):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
 
 
