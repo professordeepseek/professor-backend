@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профессор Ньютонник · Живой диалог</title>
+    <title>Профессор Ньютонник · Регистрация</title>
     <style>
         * {
             margin: 0;
@@ -125,6 +125,45 @@
             font-weight: 600;
             margin-right: 8px;
         }
+        /* СТИЛИ РЕГИСТРАЦИИ */
+        .reg-form {
+            background: white;
+            border-radius: 32px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #e0eaf5;
+        }
+        .reg-form h2 {
+            color: #0b2b4f;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .reg-form input, .reg-form select {
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 15px;
+            border: 1px solid #c0d4e8;
+            border-radius: 50px;
+            font-size: 1rem;
+            background: #fafdff;
+            outline: none;
+        }
+        .reg-form button {
+            background: #0b2b4f;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .reg-form button:hover {
+            background: #1e4a7a;
+        }
         .chat-header {
             background: #0b2b4f;
             padding: 20px 18px;
@@ -244,14 +283,14 @@
 <body>
 <div class="main-card">
     <div class="hero">
-        <div class="badge-new">🔬 Живой диалог</div>
+        <div class="badge-new">🔬 Лаборатория профессора Ньютонника</div>
         <h1>Профессор <span>Ньютонник</span></h1>
         <div class="sub">Я спрашиваю — вы отвечаете. Мы ищем решение вместе.</div>
     </div>
 
     <div class="split">
         <div class="left">
-            <!-- ВИДЕО С ПОСТЕРОМ -->
+            <!-- ВИДЕО (как было) -->
             <div class="video-box" id="videoBox">
                 <div class="video-poster" id="videoPoster">
                     🎬 Профессор Ньютонник
@@ -260,11 +299,36 @@
                 <iframe id="videoFrame" src="https://drive.google.com/file/d/1dWORniTNNUlXNbixy69DjbTWwZPTFvPp/preview" allow="autoplay"></iframe>
             </div>
 
+            <!-- РЕГИСТРАЦИЯ (будет показана, если пользователь не зарегистрирован) -->
+            <div id="registrationBlock" class="reg-form">
+                <h2>📋 Регистрация</h2>
+                <p style="margin-bottom: 20px; color: #1e4660;">Заполните форму, чтобы профессор мог обращаться к вам лично и отслеживать прогресс.</p>
+                <input type="text" id="regLastName" placeholder="Фамилия *" required>
+                <input type="text" id="regFirstName" placeholder="Имя *" required>
+                <input type="email" id="regEmail" placeholder="E-mail *" required>
+                <select id="regCategory" required>
+                    <option value="" disabled selected>— Выберите категорию — *</option>
+                    <option value="school">Школьник</option>
+                    <option value="student">Студент (будущий педагог)</option>
+                </select>
+                <input type="text" id="regGroup" placeholder="Школа / Группа (необязательно)">
+                <button id="registerBtn">Начать работу с профессором</button>
+            </div>
+
+            <!-- ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ (будет показана после регистрации) -->
+            <div id="userInfoBlock" class="reg-form" style="display: none;">
+                <h2>👤 Ваш профиль</h2>
+                <p><strong>Имя:</strong> <span id="displayFirstName"></span> <span id="displayLastName"></span></p>
+                <p><strong>E-mail:</strong> <span id="displayEmail"></span></p>
+                <p><strong>Категория:</strong> <span id="displayCategory"></span></p>
+                <p><strong>Школа/Группа:</strong> <span id="displayGroup"></span></p>
+                <p><strong>Уровень:</strong> <span id="displayLevel">не определён</span></p>
+                <button id="resetBtn" style="background: #6c757d;">Начать заново</button>
+            </div>
+
             <div class="intro-text">
                 <p><span class="highlight">Цель</span> Не просто решать задачи, а понимать, <strong>почему</strong> решение именно такое.</p>
-                <p><span class="highlight">Что нового</span> Профессор не даёт готовых ответов — он задаёт вопросы, анализирует ошибки и ведёт вас от явления к закону.</p>
-                <p><span class="highlight">Как работать</span> Пишите в чат справа. Отвечайте на вопросы профессора. Не бойтесь ошибаться — ошибка здесь тоже шаг к пониманию.</p>
-                <p style="margin-top:15px;">👉 <strong>Профессор начнёт сам.</strong> Просто поздоровайтесь.</p>
+                <p><span class="highlight">Как работать</span> Профессор запомнит вас и будет вести по индивидуальному маршруту.</p>
             </div>
         </div>
 
@@ -279,7 +343,9 @@
                 </div>
             </div>
 
-            <div class="chat-window" id="chatWindow"></div>
+            <div class="chat-window" id="chatWindow">
+                <!-- Сообщения будут добавляться скриптом -->
+            </div>
 
             <div class="chat-input-area">
                 <input type="text" id="userInput" placeholder="Ваш ответ..." autocomplete="off">
@@ -296,9 +362,8 @@
 <script>
     (function() {
         // ==================== СОСТОЯНИЕ ====================
-        let userName = '';
-        let step = 'greeting';
-        let messageHistory = []; // История для DeepSeek
+        let currentUser = null;
+        let messageHistory = [];
 
         // ==================== ЭЛЕМЕНТЫ ====================
         const chatWindow = document.getElementById('chatWindow');
@@ -307,11 +372,117 @@
         const videoBox = document.getElementById('videoBox');
         const videoPoster = document.getElementById('videoPoster');
         const videoFrame = document.getElementById('videoFrame');
+        const registrationBlock = document.getElementById('registrationBlock');
+        const userInfoBlock = document.getElementById('userInfoBlock');
+        const resetBtn = document.getElementById('resetBtn');
+        const registerBtn = document.getElementById('registerBtn');
+
+        // Поля для отображения профиля
+        const displayFirstName = document.getElementById('displayFirstName');
+        const displayLastName = document.getElementById('displayLastName');
+        const displayEmail = document.getElementById('displayEmail');
+        const displayCategory = document.getElementById('displayCategory');
+        const displayGroup = document.getElementById('displayGroup');
+        const displayLevel = document.getElementById('displayLevel');
+
+        // Поля ввода
+        const regFirstName = document.getElementById('regFirstName');
+        const regLastName = document.getElementById('regLastName');
+        const regEmail = document.getElementById('regEmail');
+        const regCategory = document.getElementById('regCategory');
+        const regGroup = document.getElementById('regGroup');
 
         // ==================== ВИДЕО ====================
         videoBox.addEventListener('click', function() {
             videoPoster.style.display = 'none';
             videoFrame.style.display = 'block';
+        });
+
+        // ==================== ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ ИЗ STORAGE ====================
+        function loadUser() {
+            const saved = localStorage.getItem('professorUser');
+            if (saved) {
+                try {
+                    currentUser = JSON.parse(saved);
+                    showUserInfo();
+                    addMessage(`Здравствуйте, ${currentUser.firstName}! Я помню вас. Чем займёмся сегодня?`, 'prof');
+                } catch (e) {
+                    console.error('Ошибка загрузки пользователя');
+                }
+            } else {
+                showRegistration();
+                addMessage('Здравствуйте! Давайте познакомимся. Заполните форму слева, чтобы я мог к вам обращаться.', 'prof');
+            }
+        }
+
+        // ==================== ПОКАЗ РЕГИСТРАЦИИ ====================
+        function showRegistration() {
+            registrationBlock.style.display = 'block';
+            userInfoBlock.style.display = 'none';
+        }
+
+        function showUserInfo() {
+            registrationBlock.style.display = 'none';
+            userInfoBlock.style.display = 'block';
+            if (currentUser) {
+                displayFirstName.textContent = currentUser.firstName || '';
+                displayLastName.textContent = currentUser.lastName || '';
+                displayEmail.textContent = currentUser.email || '';
+                displayCategory.textContent = currentUser.category === 'school' ? 'Школьник' : 'Студент (будущий педагог)';
+                displayGroup.textContent = currentUser.group || 'не указано';
+                displayLevel.textContent = currentUser.level || 'НОВИЧОК';
+            }
+        }
+
+        // ==================== РЕГИСТРАЦИЯ ====================
+        registerBtn.addEventListener('click', function() {
+            const firstName = regFirstName.value.trim();
+            const lastName = regLastName.value.trim();
+            const email = regEmail.value.trim();
+            const category = regCategory.value;
+            const group = regGroup.value.trim();
+
+            if (!firstName || !lastName || !email || !category) {
+                alert('Пожалуйста, заполните все обязательные поля (Фамилия, Имя, E-mail, Категория)');
+                return;
+            }
+
+            // Простейшая проверка email
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('Пожалуйста, введите корректный e-mail');
+                return;
+            }
+
+            currentUser = {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                category: category,
+                group: group,
+                level: 'НОВИЧОК',  // начальный уровень
+                registeredAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('professorUser', JSON.stringify(currentUser));
+            showUserInfo();
+            addMessage(`Очень приятно, ${firstName}! Я профессор Ньютонник. Теперь мы можем начать нашу работу.`, 'prof');
+            // Очистим поля ввода
+            regFirstName.value = '';
+            regLastName.value = '';
+            regEmail.value = '';
+            regCategory.value = '';
+            regGroup.value = '';
+        });
+
+        // ==================== СБРОС ====================
+        resetBtn.addEventListener('click', function() {
+            localStorage.removeItem('professorUser');
+            currentUser = null;
+            messageHistory = [];
+            showRegistration();
+            // Очистим чат
+            chatWindow.innerHTML = '';
+            addMessage('Здравствуйте! Давайте познакомимся. Заполните форму слева, чтобы я мог к вам обращаться.', 'prof');
         });
 
         // ==================== ЧАТ ====================
@@ -323,12 +494,7 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // Приветствие при загрузке
-        setTimeout(() => {
-            addMessage('Здравствуйте! Давайте познакомимся. Как вас зовут?', 'prof');
-        }, 500);
-
-        // ==================== ОТПРАВКА ====================
+        // Отправка сообщений
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -349,26 +515,21 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
             try {
-                // Отправляем запрос на бэкенд Render
+                // Отправляем запрос на бэкенд
                 const response = await fetch('https://professor-backend-1.onrender.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: messageHistory
-                    })
+                    body: JSON.stringify({ messages: messageHistory })
                 });
-                
+
                 if (!response.ok) {
-                    throw new Error('Ошибка сервера');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const data = await response.json();
                 const reply = data.reply;
 
-                // Убираем индикатор
                 document.getElementById(thinkingId)?.remove();
-
-                // Добавляем ответ
                 addMessage(reply, 'prof');
                 messageHistory.push({ role: 'assistant', content: reply });
 
@@ -379,14 +540,14 @@
             }
         }
 
-        // Обработчики
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
 
+        // ==================== СТАРТ ====================
+        loadUser();
     })();
 </script>
 </body>
 </html>
-
