@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профессор Ньютонник · Регистрация</title>
+    <title>Профессор Ньютонник · Диагностика</title>
     <style>
         * {
             margin: 0;
@@ -125,7 +125,6 @@
             font-weight: 600;
             margin-right: 8px;
         }
-        /* СТИЛИ РЕГИСТРАЦИИ */
         .reg-form {
             background: white;
             border-radius: 32px;
@@ -278,6 +277,49 @@
             margin-bottom: 15px;
             text-transform: uppercase;
         }
+        .diag-table {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #0b2b4f20;
+        }
+        .diag-row {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 5px 0;
+        }
+        .diag-label {
+            width: 120px;
+            font-weight: 600;
+            color: #0b2b4f;
+        }
+        .diag-bar {
+            flex: 1;
+            height: 24px;
+            background: #e0e8f2;
+            border-radius: 20px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+        .diag-fill {
+            height: 100%;
+            background: #0b2b4f;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        .level-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        .level-novice { background: #f8d7da; color: #721c24; }
+        .level-master { background: #fff3cd; color: #856404; }
+        .level-researcher { background: #d4edda; color: #155724; }
     </style>
 </head>
 <body>
@@ -285,12 +327,12 @@
     <div class="hero">
         <div class="badge-new">🔬 Лаборатория профессора Ньютонника</div>
         <h1>Профессор <span>Ньютонник</span></h1>
-        <div class="sub">Я спрашиваю — вы отвечаете. Мы ищем решение вместе.</div>
+        <div class="sub">Диагностика знаний по физике</div>
     </div>
 
     <div class="split">
         <div class="left">
-            <!-- ВИДЕО (как было) -->
+            <!-- ВИДЕО -->
             <div class="video-box" id="videoBox">
                 <div class="video-poster" id="videoPoster">
                     🎬 Профессор Ньютонник
@@ -299,10 +341,10 @@
                 <iframe id="videoFrame" src="https://drive.google.com/file/d/1dWORniTNNUlXNbixy69DjbTWwZPTFvPp/preview" allow="autoplay"></iframe>
             </div>
 
-            <!-- РЕГИСТРАЦИЯ (будет показана, если пользователь не зарегистрирован) -->
+            <!-- РЕГИСТРАЦИЯ -->
             <div id="registrationBlock" class="reg-form">
                 <h2>📋 Регистрация</h2>
-                <p style="margin-bottom: 20px; color: #1e4660;">Заполните форму, чтобы профессор мог обращаться к вам лично и отслеживать прогресс.</p>
+                <p style="margin-bottom: 20px; color: #1e4660;">Заполните форму, чтобы профессор мог обращаться к вам лично.</p>
                 <input type="text" id="regLastName" placeholder="Фамилия *" required>
                 <input type="text" id="regFirstName" placeholder="Имя *" required>
                 <input type="email" id="regEmail" placeholder="E-mail *" required>
@@ -312,10 +354,10 @@
                     <option value="student">Студент (будущий педагог)</option>
                 </select>
                 <input type="text" id="regGroup" placeholder="Школа / Группа (необязательно)">
-                <button id="registerBtn">Начать работу с профессором</button>
+                <button id="registerBtn">Начать работу</button>
             </div>
 
-            <!-- ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ (будет показана после регистрации) -->
+            <!-- ПРОФИЛЬ -->
             <div id="userInfoBlock" class="reg-form" style="display: none;">
                 <h2>👤 Ваш профиль</h2>
                 <p><strong>Имя:</strong> <span id="displayFirstName"></span> <span id="displayLastName"></span></p>
@@ -326,9 +368,17 @@
                 <button id="resetBtn" style="background: #6c757d;">Начать заново</button>
             </div>
 
+            <!-- РЕЗУЛЬТАТЫ ДИАГНОСТИКИ (будут показаны после завершения) -->
+            <div id="diagnosticsResultBlock" class="reg-form" style="display: none;">
+                <h2>📊 Результаты диагностики</h2>
+                <div id="diagTable"></div>
+                <div id="diagComment" style="margin-top: 20px; font-style: italic;"></div>
+                <button id="nextStepBtn" style="margin-top: 20px;">Продолжить</button>
+            </div>
+
             <div class="intro-text">
-                <p><span class="highlight">Цель</span> Не просто решать задачи, а понимать, <strong>почему</strong> решение именно такое.</p>
-                <p><span class="highlight">Как работать</span> Профессор запомнит вас и будет вести по индивидуальному маршруту.</p>
+                <p><span class="highlight">Сейчас</span> Профессор проведёт диагностику ваших знаний по трём направлениям: математика, логика, физика.</p>
+                <p><span class="highlight">Как это работает</span> Отвечайте на вопросы в чате. Профессор будет задавать уточняющие вопросы, если потребуется.</p>
             </div>
         </div>
 
@@ -343,9 +393,7 @@
                 </div>
             </div>
 
-            <div class="chat-window" id="chatWindow">
-                <!-- Сообщения будут добавляться скриптом -->
-            </div>
+            <div class="chat-window" id="chatWindow"></div>
 
             <div class="chat-input-area">
                 <input type="text" id="userInput" placeholder="Ваш ответ..." autocomplete="off">
@@ -364,6 +412,101 @@
         // ==================== СОСТОЯНИЕ ====================
         let currentUser = null;
         let messageHistory = [];
+        
+        // Диагностика
+        let diagnosticsActive = false;
+        let currentSection = 'math'; // math, logic, physics
+        let currentQuestionIndex = 0;
+        let answers = {
+            math: { correct: 0, total: 0, wrongAnswers: [] },
+            logic: { correct: 0, total: 0, wrongAnswers: [] },
+            physics: { correct: 0, total: 0, wrongAnswers: [] }
+        };
+        
+        // Вопросы по разделам (15+ в каждом)
+        const questions = {
+            math: [
+                { text: "Сколько метров в 3.5 километрах?", check: (a) => parseFloat(a) === 3500 },
+                { text: "Выразите скорость 72 км/ч в м/с", check: (a) => parseFloat(a) === 20 },
+                { text: "Решите уравнение: 2x + 5 = 15", check: (a) => parseFloat(a) === 5 },
+                { text: "Чему равен синус 30 градусов?", check: (a) => parseFloat(a) === 0.5 || a.includes('0.5') },
+                { text: "Вычислите: (2^3 + 4) / 3", check: (a) => parseFloat(a) === 4 },
+                { text: "Сколько секунд в 2 часах?", check: (a) => parseFloat(a) === 7200 },
+                { text: "Упростите: 3a + 2b - a + 3b", check: (a) => a.includes('2a') && a.includes('5b') },
+                { text: "Найдите корень уравнения: x^2 = 49", check: (a) => parseFloat(a) === 7 || parseFloat(a) === -7 || a.includes('7') },
+                { text: "Чему равно 15% от 200?", check: (a) => parseFloat(a) === 30 },
+                { text: "Вычислите: 1/2 + 1/3", check: (a) => a.includes('5/6') || parseFloat(a) === 0.833 },
+                { text: "Решите пропорцию: 2/5 = x/15", check: (a) => parseFloat(a) === 6 },
+                { text: "Чему равна площадь квадрата со стороной 5 см?", check: (a) => parseFloat(a) === 25 },
+                { text: "Найдите среднее арифметическое чисел 4, 6, 8", check: (a) => parseFloat(a) === 6 },
+                { text: "Сколько граммов в 0.2 кг?", check: (a) => parseFloat(a) === 200 },
+                { text: "Вычислите: √(16 + 9)", check: (a) => parseFloat(a) === 5 }
+            ],
+            logic: [
+                { text: "Если все A суть B, а некоторые B суть C, то обязательно ли некоторые A суть C?", 
+                  check: (a) => a.toLowerCase().includes('не') || a.toLowerCase().includes('нет') },
+                { text: "У трех братьев по одной сестре. Сколько детей в семье?", 
+                  check: (a) => parseInt(a) === 4 },
+                { text: "Что тяжелее: килограмм ваты или килограмм железа?", 
+                  check: (a) => a.toLowerCase().includes('одинак') || a.toLowerCase().includes('равн') },
+                { text: "Продолжите последовательность: 2, 4, 8, 16, ...", 
+                  check: (a) => parseInt(a) === 32 },
+                { text: "В коробке 10 красных и 5 синих шаров. Сколько шаров нужно вытащить, чтобы гарантированно иметь 2 одного цвета?", 
+                  check: (a) => parseInt(a) === 3 },
+                { text: "Если в 12 часов ночи идет дождь, то можно ли ожидать, что через 72 часа будет солнечно?", 
+                  check: (a) => a.toLowerCase().includes('нет') || a.toLowerCase().includes('ночь') },
+                { text: "Что больше: сумма чисел от 1 до 10 или произведение?", 
+                  check: (a) => a.toLowerCase().includes('сумм') },
+                { text: "У человека есть три спички. Как сложить из них шесть, не ломая?", 
+                  check: (a) => a.toLowerCase().includes('римск') || a.toLowerCase().includes('vi') },
+                { text: "Двое играли в шахматы 2 часа. Сколько играл каждый?", 
+                  check: (a) => parseInt(a) === 2 },
+                { text: "На столе лежали конфеты. Половину съели, осталось 5. Сколько было?", 
+                  check: (a) => parseInt(a) === 10 },
+                { text: "Если перевернуть число 9, что получится?", 
+                  check: (a) => a.includes('6') },
+                { text: "Что легче: 1 кг гвоздей или 1 кг ваты?", 
+                  check: (a) => a.toLowerCase().includes('одинак') },
+                { text: "У семи нянек дитя без глаза. Что это значит?", 
+                  check: (a) => a.toLowerCase().includes('ответственности') || a.toLowerCase().includes('смотрят') },
+                { text: "Как правильно: 5 + 5 * 2 = 15 или 20?", 
+                  check: (a) => a.includes('15') },
+                { text: "Что будет, если красный шелк намочить в синей воде?", 
+                  check: (a) => a.toLowerCase().includes('мокр') || a.toLowerCase().includes('красн') }
+            ],
+            physics: [
+                { text: "Что изучает кинематика?", 
+                  check: (a) => a.toLowerCase().includes('движ') && !a.toLowerCase().includes('причин') },
+                { text: "В каких единицах измеряется скорость в СИ?", 
+                  check: (a) => a.includes('м/с') },
+                { text: "Чем путь отличается от перемещения?", 
+                  check: (a) => a.toLowerCase().includes('вектор') || a.toLowerCase().includes('направл') },
+                { text: "Какое ускорение свободного падения на Земле?", 
+                  check: (a) => a.includes('9.8') || a.includes('10') },
+                { text: "Что такое инерция?", 
+                  check: (a) => a.toLowerCase().includes('сохран') && a.toLowerCase().includes('скорост') },
+                { text: "Какая сила тяжести действует на тело массой 2 кг?", 
+                  check: (a) => parseFloat(a) === 19.6 || parseFloat(a) === 20 },
+                { text: "Что измеряют в ньютонах?", 
+                  check: (a) => a.toLowerCase().includes('сил') },
+                { text: "Тело брошено вертикально вверх. Где его скорость равна нулю?", 
+                  check: (a) => a.toLowerCase().includes('верх') || a.toLowerCase().includes('макс') },
+                { text: "Чему равно давление воды на глубине 10 м?", 
+                  check: (a) => a.includes('100000') || a.includes('10^5') },
+                { text: "Что такое сила трения?", 
+                  check: (a) => a.toLowerCase().includes('скольж') || a.toLowerCase().includes('пок') },
+                { text: "Какой закон Ньютона описывает взаимодействие тел?", 
+                  check: (a) => a.includes('3') || a.includes('трет') },
+                { text: "Что такое потенциальная энергия?", 
+                  check: (a) => a.toLowerCase().includes('высот') || a.toLowerCase().includes('полож') },
+                { text: "Тело массой 1 кг имеет скорость 10 м/с. Какова его кинетическая энергия?", 
+                  check: (a) => parseFloat(a) === 50 },
+                { text: "Что произойдет с частотой колебаний маятника, если его укоротить?", 
+                  check: (a) => a.toLowerCase().includes('увелич') },
+                { text: "Какая температура таяния льда по шкале Цельсия?", 
+                  check: (a) => parseInt(a) === 0 }
+            ]
+        };
 
         // ==================== ЭЛЕМЕНТЫ ====================
         const chatWindow = document.getElementById('chatWindow');
@@ -374,8 +517,10 @@
         const videoFrame = document.getElementById('videoFrame');
         const registrationBlock = document.getElementById('registrationBlock');
         const userInfoBlock = document.getElementById('userInfoBlock');
+        const diagnosticsResultBlock = document.getElementById('diagnosticsResultBlock');
         const resetBtn = document.getElementById('resetBtn');
         const registerBtn = document.getElementById('registerBtn');
+        const nextStepBtn = document.getElementById('nextStepBtn');
 
         // Поля для отображения профиля
         const displayFirstName = document.getElementById('displayFirstName');
@@ -398,16 +543,23 @@
             videoFrame.style.display = 'block';
         });
 
-        // ==================== ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ ИЗ STORAGE ====================
+        // ==================== ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ ====================
         function loadUser() {
             const saved = localStorage.getItem('professorUser');
             if (saved) {
                 try {
                     currentUser = JSON.parse(saved);
                     showUserInfo();
-                    addMessage(`Здравствуйте, ${currentUser.firstName}! Я помню вас. Чем займёмся сегодня?`, 'prof');
+                    // Проверяем, проходил ли диагностику
+                    if (currentUser.diagnosticsCompleted) {
+                        showDiagnosticsResults(currentUser.diagnostics);
+                    } else {
+                        // Предлагаем начать диагностику
+                        addMessage(`${currentUser.firstName}, давайте проведём диагностику ваших знаний. Это займёт 10-15 минут и поможет мне понять ваш уровень. Начнём?`, 'prof');
+                    }
                 } catch (e) {
                     console.error('Ошибка загрузки пользователя');
+                    showRegistration();
                 }
             } else {
                 showRegistration();
@@ -415,15 +567,16 @@
             }
         }
 
-        // ==================== ПОКАЗ РЕГИСТРАЦИИ ====================
         function showRegistration() {
             registrationBlock.style.display = 'block';
             userInfoBlock.style.display = 'none';
+            diagnosticsResultBlock.style.display = 'none';
         }
 
         function showUserInfo() {
             registrationBlock.style.display = 'none';
             userInfoBlock.style.display = 'block';
+            diagnosticsResultBlock.style.display = 'none';
             if (currentUser) {
                 displayFirstName.textContent = currentUser.firstName || '';
                 displayLastName.textContent = currentUser.lastName || '';
@@ -432,6 +585,63 @@
                 displayGroup.textContent = currentUser.group || 'не указано';
                 displayLevel.textContent = currentUser.level || 'НОВИЧОК';
             }
+        }
+
+        function showDiagnosticsResults(diagnostics) {
+            registrationBlock.style.display = 'none';
+            userInfoBlock.style.display = 'none';
+            diagnosticsResultBlock.style.display = 'block';
+            
+            const mathPercent = Math.round((diagnostics.math.correct / diagnostics.math.total) * 100) || 0;
+            const logicPercent = Math.round((diagnostics.logic.correct / diagnostics.logic.total) * 100) || 0;
+            const physicsPercent = Math.round((diagnostics.physics.correct / diagnostics.physics.total) * 100) || 0;
+            const avg = Math.round((mathPercent + logicPercent + physicsPercent) / 3);
+            
+            let level = 'НОВИЧОК';
+            let levelClass = 'level-novice';
+            if (avg >= 76) {
+                level = 'ИССЛЕДОВАТЕЛЬ';
+                levelClass = 'level-researcher';
+            } else if (avg >= 41) {
+                level = 'МАСТЕР';
+                levelClass = 'level-master';
+            }
+            
+            let html = `
+                <div class="diag-row">
+                    <span class="diag-label">МАТЕМАТИКА</span>
+                    <div class="diag-bar"><div class="diag-fill" style="width:${mathPercent}%"></div></div>
+                    ${mathPercent}%
+                </div>
+                <div class="diag-row">
+                    <span class="diag-label">ЛОГИКА</span>
+                    <div class="diag-bar"><div class="diag-fill" style="width:${logicPercent}%"></div></div>
+                    ${logicPercent}%
+                </div>
+                <div class="diag-row">
+                    <span class="diag-label">ФИЗИКА</span>
+                    <div class="diag-bar"><div class="diag-fill" style="width:${physicsPercent}%"></div></div>
+                    ${physicsPercent}%
+                </div>
+                <div style="margin:20px 0; text-align:center;">
+                    <span class="level-badge ${levelClass}">${level}</span>
+                </div>
+            `;
+            
+            let comment = '';
+            if (mathPercent < 40) comment += 'По математике есть пробелы. ';
+            if (logicPercent < 40) comment += 'Логические цепочки пока даются с трудом. ';
+            if (physicsPercent < 40) comment += 'Физические явления нужно разбирать подробнее. ';
+            if (comment === '') comment = 'Отличная база! Можно переходить к сложным задачам.';
+            
+            document.getElementById('diagTable').innerHTML = html;
+            document.getElementById('diagComment').innerHTML = `<p>${comment}</p>`;
+            
+            // Сохраняем результаты в пользователе
+            currentUser.diagnostics = diagnostics;
+            currentUser.diagnosticsCompleted = true;
+            currentUser.level = level;
+            localStorage.setItem('professorUser', JSON.stringify(currentUser));
         }
 
         // ==================== РЕГИСТРАЦИЯ ====================
@@ -443,11 +653,10 @@
             const group = regGroup.value.trim();
 
             if (!firstName || !lastName || !email || !category) {
-                alert('Пожалуйста, заполните все обязательные поля (Фамилия, Имя, E-mail, Категория)');
+                alert('Пожалуйста, заполните все обязательные поля');
                 return;
             }
 
-            // Простейшая проверка email
             if (!email.includes('@') || !email.includes('.')) {
                 alert('Пожалуйста, введите корректный e-mail');
                 return;
@@ -459,14 +668,15 @@
                 email: email,
                 category: category,
                 group: group,
-                level: 'НОВИЧОК',  // начальный уровень
+                level: 'НОВИЧОК',
                 registeredAt: new Date().toISOString()
             };
 
             localStorage.setItem('professorUser', JSON.stringify(currentUser));
             showUserInfo();
-            addMessage(`Очень приятно, ${firstName}! Я профессор Ньютонник. Теперь мы можем начать нашу работу.`, 'prof');
-            // Очистим поля ввода
+            addMessage(`Очень приятно, ${firstName}! Я профессор Ньютонник. Готовы начать диагностику?`, 'prof');
+            
+            // Очистим поля
             regFirstName.value = '';
             regLastName.value = '';
             regEmail.value = '';
@@ -479,11 +689,79 @@
             localStorage.removeItem('professorUser');
             currentUser = null;
             messageHistory = [];
-            showRegistration();
-            // Очистим чат
+            diagnosticsActive = false;
             chatWindow.innerHTML = '';
-            addMessage('Здравствуйте! Давайте познакомимся. Заполните форму слева, чтобы я мог к вам обращаться.', 'prof');
+            showRegistration();
+            addMessage('Здравствуйте! Давайте познакомимся. Заполните форму слева.', 'prof');
         });
+
+        // ==================== ДИАГНОСТИКА ====================
+        function startDiagnostics() {
+            diagnosticsActive = true;
+            currentSection = 'math';
+            currentQuestionIndex = 0;
+            answers = { math: { correct: 0, total: 0, wrongAnswers: [] },
+                       logic: { correct: 0, total: 0, wrongAnswers: [] },
+                       physics: { correct: 0, total: 0, wrongAnswers: [] } };
+            
+            // Перемешиваем вопросы для непредсказуемости
+            shuffleArray(questions.math);
+            shuffleArray(questions.logic);
+            shuffleArray(questions.physics);
+            
+            askNextQuestion();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function askNextQuestion() {
+            if (!diagnosticsActive) return;
+            
+            // Проверяем, не закончили ли текущий раздел
+            if (currentQuestionIndex >= questions[currentSection].length) {
+                // Переходим к следующему разделу
+                if (currentSection === 'math') {
+                    currentSection = 'logic';
+                    currentQuestionIndex = 0;
+                    addMessage('Хорошо. Теперь несколько вопросов по логике.', 'prof');
+                } else if (currentSection === 'logic') {
+                    currentSection = 'physics';
+                    currentQuestionIndex = 0;
+                    addMessage('Отлично. Перейдём к физике.', 'prof');
+                } else {
+                    // Все разделы пройдены
+                    finishDiagnostics();
+                    return;
+                }
+            }
+            
+            const q = questions[currentSection][currentQuestionIndex];
+            addMessage(q.text, 'prof');
+            answers[currentSection].total++;
+        }
+
+        function finishDiagnostics() {
+            diagnosticsActive = false;
+            
+            // Вычисляем проценты
+            const mathPercent = (answers.math.correct / answers.math.total) * 100 || 0;
+            const logicPercent = (answers.logic.correct / answers.logic.total) * 100 || 0;
+            const physicsPercent = (answers.physics.correct / answers.physics.total) * 100 || 0;
+            
+            // Сохраняем в пользователе
+            currentUser.diagnostics = answers;
+            currentUser.diagnosticsCompleted = true;
+            
+            // Показываем результаты
+            showDiagnosticsResults(answers);
+            
+            addMessage(`${currentUser.firstName}, диагностика завершена. Посмотрите результаты слева.`, 'prof');
+        }
 
         // ==================== ЧАТ ====================
         function addMessage(text, sender) {
@@ -494,7 +772,6 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // Отправка сообщений
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -502,10 +779,24 @@
             addMessage(text, 'user');
             userInput.value = '';
 
-            // Добавляем сообщение в историю
+            // Если идёт диагностика, обрабатываем ответ
+            if (diagnosticsActive) {
+                const q = questions[currentSection][currentQuestionIndex];
+                if (q.check(text)) {
+                    answers[currentSection].correct++;
+                    addMessage('Верно!', 'prof');
+                } else {
+                    answers[currentSection].wrongAnswers.push({ question: q.text, answer: text });
+                    addMessage('Интересный ответ. Но правильнее было бы по-другому. Давайте дальше.', 'prof');
+                }
+                currentQuestionIndex++;
+                setTimeout(askNextQuestion, 500);
+                return;
+            }
+
+            // Обычный режим (отправка в DeepSeek)
             messageHistory.push({ role: 'user', content: text });
 
-            // Индикатор
             const thinkingId = 'think_' + Date.now();
             const thinkDiv = document.createElement('div');
             thinkDiv.className = 'message prof';
@@ -515,7 +806,6 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
             try {
-                // Отправляем запрос на бэкенд
                 const response = await fetch('https://professor-backend-1.onrender.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -541,6 +831,39 @@
         }
 
         sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Обработка команды "начать диагностику" из чата (имитация)
+        function checkForDiagnosticsCommand(text) {
+            if (!currentUser || currentUser.diagnosticsCompleted) return false;
+            if (text.toLowerCase().includes('да') || text.toLowerCase().includes('начн') || text.toLowerCase().includes('готов')) {
+                startDiagnostics();
+                return true;
+            }
+            return false;
+        }
+
+        // Переопределяем sendMessage для обработки команд
+        const originalSend = sendMessage;
+        sendMessage = async function() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            if (!diagnosticsActive && currentUser && !currentUser.diagnosticsCompleted) {
+                if (checkForDiagnosticsCommand(text)) {
+                    userInput.value = '';
+                    return;
+                }
+            }
+            
+            await originalSend();
+        };
+
+        sendBtn.removeEventListener('click', originalSend);
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.removeEventListener('keypress', originalSend);
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
